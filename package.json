@@ -1,0 +1,1 @@
+{"name":"agent-games-dual","private":true,"type":"module","scripts":{"test":"tsx --test src/*.test.ts","build":"tsc --noEmit","start":"tsx src/server.ts"},"dependencies":{"fastify":"^5.0.0","snarkjs":"^0.7.5","viem":"^2.0.0"},"devDependencies":{"typescript":"~5.7.3","tsx":"^4.0.0","@types/node":"^22.0.0"}}
