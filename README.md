@@ -2,7 +2,7 @@
 
 Read-only payment policy reviewer submitted to Agent Games Wildcard. It compares proposed EVM transfers against a supplied recipient, asset, chain, spending cap and expiry. Mismatches return `REJECT`; matching requests return `REQUIRES_HUMAN_APPROVAL`. It never signs or sends funds.
 
-[Live demo](https://possible-populations-orientation-slideshow.trycloudflare.com/) · [Demo video](docs/syndrome-demo.mp4)
+[Live demo](https://syndrome.kydra.my.id/) · [Demo video](docs/syndrome-demo.mp4)
 
 ![Actual demo responses using synthetic presets](docs/syndrome-demo.gif)
 
@@ -52,6 +52,6 @@ Gatekeeper approval/finality, proof reuse, competition binding and lifecycle han
 
 ## Deployment status
 
-Wildcard was submitted as `Syndrome - Payment Review`; dashboard readback showed PENDING. The local API is now a user systemd service with automatic restart and startup enabled. The public URL is still an ephemeral Cloudflare tunnel: a tunnel restart may change the URL, and machine/network downtime still affects access. Permanent hosting/domain is not configured. Source files and demo remain available through this repository when the tunnel is offline.
+Wildcard was submitted as `Syndrome - Payment Review`; dashboard readback showed PENDING. The local API is now a user systemd service with automatic restart and startup enabled. The public URL now uses a named Cloudflare tunnel at syndrome.kydra.my.id. Both API and tunnel are enabled user systemd services. The hostname survived a tunnel restart; machine/network downtime still affects availability. The original temporary tunnel remains active for the immutable pending submission. Source files and demo remain available through this repository when the tunnel is offline.
 
 Never commit `.env`, runtime data, wallet keys or HMAC secrets. The original host stores credentials outside this repository.

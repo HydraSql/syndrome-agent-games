@@ -2,8 +2,8 @@
 
 Track: Wildcard
 
-Demo: https://possible-populations-orientation-slideshow.trycloudflare.com/
-Public endpoint: https://possible-populations-orientation-slideshow.trycloudflare.com/api/wildcard/review
+Demo: https://syndrome.kydra.my.id/
+Public endpoint: https://syndrome.kydra.my.id/api/wildcard/review
 Method: POST, application/json
 Repository: https://github.com/HydraSql/syndrome-agent-games
 
@@ -23,7 +23,7 @@ A separate signed Agent Games Gatekeeper handler uses the official Groth16 artif
 
 The public reviewer does not retrieve chain data, validate balances, simulate contracts, sign transactions or transfer assets. Caller-supplied policy is not independently authenticated. It is a deterministic review component rather than an autonomous LLM researcher. Public reviewer responses do not include ZK proofs. No finalized on-chain proof reference is claimed.
 
-The HTTPS demo currently uses an ephemeral Cloudflare tunnel and requires the local service to remain running. Stable hosting is needed for continuous judging availability. Wildcard source has been published to the GitHub repository. The local service is managed by systemd with restart-on-failure; this does not make the ephemeral tunnel URL permanent.
+The demo now uses the permanent hostname syndrome.kydra.my.id through a Cloudflare named tunnel. API and tunnel start automatically and restart on failure. The host still needs power and Internet access. The original temporary URL remains active because the pending submission has no visible edit control. Use the domain links above for current access.
 
 ## Verified checks
 
