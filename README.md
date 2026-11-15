@@ -14,6 +14,14 @@ The clip is a 16-second sequence of actual browser captures from the public demo
 
 This is not a persistent paid-invoice ledger. Caller-supplied history and policy are untrusted inputs for comparison, not independent evidence. Four batch tests cover split-budget excess, duplicate/history handling, mixed assets, malformed values and digest binding. Current ordinary suite: 14 passing tests; TypeScript build passes.
 
+## Autonomous transaction evidence
+
+[Review an unsigned transaction](https://syndrome.kydra.my.id/transaction). POST `/api/wildcard/transaction` accepts a canonical ERC20 transfer/approve and structured intent. The bounded workflow decodes calldata, compares token/target/chain/amount, rejects unlimited approval and unexpected native value, checks RPC chain identity, pins a block, reads balance and (for approvals) allowance, then rechecks the block hash. It returns BLOCK or NEEDS_HUMAN_APPROVAL with an execution trace and evidence.
+
+Only Ethereum and Base are supported through fixed public RPC endpoints. RPC calls have a shared 12-second timeout and the endpoint allows three concurrent reviews. No caller-supplied RPC URLs are accepted. State is read at one block number with a hash consistency check; this does not establish finality or cryptographic provenance. Intent is caller-supplied. No transaction simulation, token legitimacy assessment, gas check, signature, or broadcast occurs.
+
+A live Ethereum read completed at block 26417395 with balance evidence and NEEDS_HUMAN_APPROVAL. That result is a snapshot, not a transfer recommendation. The ordinary suite now passes 18 tests, including deterministic mocked-RPC failure/reorg tests; TypeScript check passes. No LLM is required: this agent executes a bounded evidence-gathering workflow.
+
 ## Scope
 
 The reviewer uses deterministic rules, not an LLM. It does not retrieve chain state, verify balances, simulate transactions or establish that a caller-supplied policy is authentic. The returned input digest is a checksum, not a ZK proof. No wallet connection is needed.
