@@ -23,10 +23,10 @@ A separate signed Agent Games Gatekeeper handler uses the official Groth16 artif
 
 The public reviewer does not retrieve chain data, validate balances, simulate contracts, sign transactions or transfer assets. Caller-supplied policy is not independently authenticated. It is a deterministic review component rather than an autonomous LLM researcher. Public reviewer responses do not include ZK proofs. No finalized on-chain proof reference is claimed.
 
-The HTTPS demo currently uses an ephemeral Cloudflare tunnel and requires the local service to remain running. Stable hosting is needed for continuous judging availability. Updated Wildcard source is currently local; the GitHub repository still needs the new files before submission should be considered complete.
+The HTTPS demo currently uses an ephemeral Cloudflare tunnel and requires the local service to remain running. Stable hosting is needed for continuous judging availability. Wildcard source has been published to the GitHub repository. The local service is managed by systemd with restart-on-failure; this does not make the ephemeral tunnel URL permanent.
 
 ## Verified checks
 
 Eleven local tests pass, including actual local Groth16 proving and HTTP replay tests in the separate Gatekeeper handler. TypeScript check passes. Public browser test: matching input required human approval; wrong recipient plus over-cap input rejected with both rule failures. The snarkjs test runner produced a MaxListeners warning; this remains a limitation of the current proof test setup.
 
-Submission status: prepared, not submitted.
+Submission status: submitted as Syndrome - Payment Review; dashboard readback showed PENDING. Demo media: docs/syndrome-demo.gif and docs/syndrome-demo.mp4.

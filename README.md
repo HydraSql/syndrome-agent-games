@@ -1,32 +1,57 @@
-# Agent Games dual-track workbench — BLOCKED / NOT COMPETITION READY
+# Syndrome — Payment Review
 
-Targets: Proof Gatekeeper and Steal the VFY. No registration, deployment, paid proof submission or account changes have occurred.
+Read-only payment policy reviewer submitted to Agent Games Wildcard. It compares proposed EVM transfers against a supplied recipient, asset, chain, spending cap and expiry. Mismatches return `REJECT`; matching requests return `REQUIRES_HUMAN_APPROVAL`. It never signs or sends funds.
 
-Implemented: TypeScript/Fastify local handler, raw-body authentication using an explicitly provisional HMAC-SHA256 hex convention, timestamp/deadline rejection, deterministic payment field checks, and fail-closed readiness responses. Health reports competitionReady=false; preflight deliberately returns 503 until actual proof support is implemented. This is not a working competition agent yet. Do not register this endpoint.
+[Live demo](https://possible-populations-orientation-slideshow.trycloudflare.com/) · [Demo video](docs/syndrome-demo.mp4)
 
-Verified locally: npm test passes two tests, npm run build passes. Both official proving keys parsed successfully and exported verification keys through snarkjs. No witness or Groth16 decision proof has been generated. Local fixtures use synthetic shortened identifiers and are not platform practice results.
+![Actual demo responses using synthetic presets](docs/syndrome-demo.gif)
 
-Official downloads in artifacts/: gatekeeper.wasm, gatekeeper_final.zkey, vfy-policy.wasm, vfy-policy_final.zkey, exported verification keys, manifest.json with exact byte sizes and SHA256 hashes. Source .circom URLs at the matching public paths returned 404.
+The clip is a 16-second sequence of actual browser captures from the public demo, not a continuous screen recording. Presets are synthetic and labelled. Responses come from the backend.
 
-Sources inspected:
-- https://agentgames.zkverify.io/build (including both starter prompt tabs)
-- https://agentgames.zkverify.io/api/circuit-info
-- https://agentgames.zkverify.io/guide
+## Scope
 
-Blocking information:
-1. Circuit witness input names, dimensions, public signal order and policy parameter semantics are not documented in the inspected pages. No canonical input fixture has been provided.
-2. Exact HMAC digest algorithm/header encoding needs confirmation; SHA256 hex in this workbench is an assumption, not platform-verified compatibility.
-3. Incoming-proof lookup/finality semantics need an authoritative API/schema and practice envelope. No proof_tx is trusted merely because it is present.
-4. Duel strategy parameters, Poseidon commitment inputs/order, and salt format need circuit-level confirmation. No commitment or strategy is registered.
-5. Platform-issued secret and public HTTPS hosting are required later. Do not paste secrets into chat.
-6. npm audit reports three high dependency advisories through snarkjs/bfj/jsonpath/underscore. npm audit fix did not resolve them. Do not deploy before reviewing/remediating the chain.
+The reviewer uses deterministic rules, not an LLM. It does not retrieve chain state, verify balances, simulate transactions or establish that a caller-supplied policy is authentic. The returned input digest is a checksum, not a ZK proof. No wallet connection is needed.
 
-Next required artifact: official circuit source or canonical witness examples for both tracks and exact signing specification, potentially available through the registered dashboard or organizer support. User login may be required. No proof output, successful preflight or competition readiness should be claimed until validated against platform practice.
+## Run locally
 
-Run local checks:
+Node.js 22+ is required.
 
-    cd /home/syndrome/agent-games
-    /usr/bin/npm test
-    /usr/bin/npm run build
+    npm ci
+    npm run start:wildcard
 
-Local service requires AGENT_GAMES_HMAC_SECRET from environment and runs on loopback port 5180 with npm start. No secret is embedded or stored here.
+Open http://127.0.0.1:5180. The standalone Wildcard service requires no HMAC secret and exposes only the read-only demo/API. Use `/usr/bin/npm` on the original host because its default npm executable is broken.
+
+POST `/api/wildcard/review` accepts:
+
+```json
+{
+  "request": {"recipient":"0x1111111111111111111111111111111111111111","asset":"0x2222222222222222222222222222222222222222","chainId":1,"amount":"500"},
+  "policy": {"recipient":"0x1111111111111111111111111111111111111111","asset":"0x2222222222222222222222222222222222222222","chainId":1,"maxAmount":"1000","expiresAt":"2030-01-01T00:00:00.000Z"}
+}
+```
+
+Amounts are decimal strings in base units and checked as uint256 values. Invalid inputs return 400. Passing a policy never means an asset is safe to transfer.
+
+## Tests
+
+    npm test
+    npm run build
+
+The optional real-proof integration test requires official artifacts downloaded first:
+
+    npm run artifacts
+    npm run test:proof
+
+The full suite passed 11 tests on the development machine, including local Groth16 generation and stable response replay. TypeScript checking passed. The proof test uses force-exit for snarkjs worker handles; a MaxListeners warning remains under investigation. Passing tests do not establish production payment safety.
+
+## Gatekeeper integration (separate, incomplete)
+
+The signed `/agent` handler is separate from the Wildcard reviewer. One official practice task, `practice_f27a6927-d3fb-4f96-9ed3-e4780ef90f7a`, showed CORRECT DECISION, REJECT / RECIPIENT_MISMATCH, Proof VERIFIED, latency 2139 ms. Practice does not submit proofs to chain. We do not claim finalized on-chain verification or that all scenarios pass.
+
+Gatekeeper approval/finality, proof reuse, competition binding and lifecycle handling remain incomplete. The practice encoding experiment is not promoted to competition. Steal the VFY enrollment was locked at registration. Do not use the signed handler as a production payment authorizer.
+
+## Deployment status
+
+Wildcard was submitted as `Syndrome - Payment Review`; dashboard readback showed PENDING. The local API is now a user systemd service with automatic restart and startup enabled. The public URL is still an ephemeral Cloudflare tunnel: a tunnel restart may change the URL, and machine/network downtime still affects access. Permanent hosting/domain is not configured. Source files and demo remain available through this repository when the tunnel is offline.
+
+Never commit `.env`, runtime data, wallet keys or HMAC secrets. The original host stores credentials outside this repository.
