@@ -1,3 +1,4 @@
+import {reviewBatch} from './batch-review.js';
 import type {FastifyInstance} from 'fastify';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
@@ -15,6 +16,8 @@ export function reviewPayment(data:any,now=Date.now()){
  return {agent:'syndrome',version:'wildcard-v1',decision:checks.every(c=>c.pass)?'REQUIRES_HUMAN_APPROVAL':'REJECT',checks,failedRules:checks.filter(c=>!c.pass).map(c=>c.rule),evaluatedAt:new Date(now).toISOString(),inputDigest:createHash('sha256').update(JSON.stringify(canonical)).digest('hex'),proofStatus:'NOT_GENERATED',scope:'Deterministic comparison of caller-supplied data. No chain lookup, balance verification, simulation, signing, or transfer. A digest is not a ZK proof.'};
 }
 export function addWildcard(app:FastifyInstance){
+ app.get('/batch',async(_q,r)=>r.type('text/html').send(readFileSync(new URL('../public/batch.html',import.meta.url),'utf8')));
+ app.post('/api/wildcard/batch',async(req,reply)=>{try{return reviewBatch(Buffer.isBuffer(req.body)?JSON.parse(req.body.toString('utf8')):req.body)}catch(e){return reply.code(400).send({error:e instanceof Error?e.message:'Invalid request'})}});
  app.get('/',async(_q,r)=>r.type('text/html').send(readFileSync(new URL('../public/wildcard.html',import.meta.url),'utf8')));
  app.get('/api/wildcard',()=>({agent:'syndrome',method:'POST',endpoint:'/api/wildcard/review',capability:'Read-only deterministic payment policy review',proofs:'No ZK proof claimed for this endpoint'}));
  app.post('/api/wildcard/review',async(req,reply)=>{try{const data=Buffer.isBuffer(req.body)?JSON.parse(req.body.toString('utf8')):req.body;return reviewPayment(data)}catch(e){return reply.code(400).send({error:e instanceof Error?e.message:'Invalid request'})}});

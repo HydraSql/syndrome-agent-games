@@ -8,6 +8,12 @@ Read-only payment policy reviewer submitted to Agent Games Wildcard. It compares
 
 The clip is a 16-second sequence of actual browser captures from the public demo, not a continuous screen recording. Presets are synthetic and labelled. Responses come from the backend.
 
+## Batch review
+
+[Open batch review](https://syndrome.kydra.my.id/batch). POST `/api/wildcard/batch` reviews 1–100 payments against an allowlist, one chain/asset, per-transfer cap, aggregate budget and expiry. It detects duplicate invoice IDs within the batch and IDs present in a caller-supplied paid list. All rows matching the policy asset/chain count toward the total, even rejected rows; other assets are not added together. A batch rejection overrides per-row passes. The UI exports the actual decision JSON.
+
+This is not a persistent paid-invoice ledger. Caller-supplied history and policy are untrusted inputs for comparison, not independent evidence. Four batch tests cover split-budget excess, duplicate/history handling, mixed assets, malformed values and digest binding. Current ordinary suite: 14 passing tests; TypeScript build passes.
+
 ## Scope
 
 The reviewer uses deterministic rules, not an LLM. It does not retrieve chain state, verify balances, simulate transactions or establish that a caller-supplied policy is authentic. The returned input digest is a checksum, not a ZK proof. No wallet connection is needed.
